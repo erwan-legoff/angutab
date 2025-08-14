@@ -1,0 +1,5 @@
+@if (tabs$ | async; as tabs) {
+  <pre>{{ tabs | json }}</pre>
+} @else {
+  <p>Loading…</p>
+}
