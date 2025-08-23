@@ -28,5 +28,5 @@ export interface FretBoardDto {
 
 export interface TabDto {
   fretBoard: FretBoardDto;
-  strategy: Record<string, unknown>;
+  tabToString: string;
 }

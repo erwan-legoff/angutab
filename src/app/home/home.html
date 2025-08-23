@@ -1,5 +1,5 @@
 @if (tabs$ | async; as tabs) {
-  <pre>{{ tabs | json }}</pre>
+    <p style="white-space: pre-line;">{{ tabs.tabToString }}</p>
 } @else {
   <p>Loading…</p>
 }
