@@ -9,14 +9,14 @@ export interface PlayedNoteDto {
   duration: number;
 }
 
-export interface MelodyItemDto {
+export interface TabNoteDto {
   playedNote: PlayedNoteDto;
   caseNumber?: number;
 }
 
 export interface TabLineDto {
   root: NoteDto;
-  melody: MelodyItemDto[];
+  melody: TabNoteDto[];
   maxCaseNumber: number;
   mustCorrectTime: boolean;
 }
