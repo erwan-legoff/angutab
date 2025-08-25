@@ -6,6 +6,8 @@ import { MelodyDto } from './dto/melody.dto'; // ton type: { playedNotes; beatPe
 import { TabFromMelodyDto } from './dto/tab-from-melody.dto';
 import { TabDto } from './dto/tab.dto'; // la réponse de tab (selon ton contrat)
 import { TrackFromMelodyDto } from './dto/track-from-melody.dto';
+import * as Tone from "tone";
+import { Midi } from '@tonejs/midi';
 
 @Component({
   selector: 'app-home',
@@ -45,9 +47,25 @@ export class Home {
       })
     ),
     map((blob) => {
-      const file = new File([blob], 'midi.midi');
+      const file = new File([blob], 'midi.mid');
       const url = URL.createObjectURL(file);
+
       return { file, url };
-    })
+    }),
+    shareReplay(1)
   );
+
+  midiTone$: Observable<Midi> = this.midi$.pipe(
+    switchMap(async (midi) => {
+      return Midi.fromUrl(midi.url);
+    }),
+    shareReplay(1)
+  );
+//https://stackoverflow.com/questions/75227704/how-can-i-use-tone-js-to-play-a-midi-file
+  // playMidi(){
+
+  //   const synth = new Tone.Synth().toDestination()
+    
+  //   synth.
+  // }
 }
