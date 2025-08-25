@@ -32,7 +32,7 @@ export class Home {
     shareReplay(1)
   );
 
-  midi$: Observable<Blob> = this.melody$.pipe(
+  midi$: Observable<{ file: File; url: string }> = this.melody$.pipe(
     map(
       (melody): TrackFromMelodyDto => ({
         playedNotes: melody.playedNotes,
@@ -43,6 +43,11 @@ export class Home {
       this.http.post(`${this.apiHost}/tracks/preview/from-melody`, dto, {
         responseType: 'blob',
       })
-    )
+    ),
+    map((blob) => {
+      const file = new File([blob], 'midi.midi');
+      const url = URL.createObjectURL(file);
+      return { file, url };
+    })
   );
 }

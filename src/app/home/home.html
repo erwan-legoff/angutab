@@ -1,5 +1,10 @@
 @if (tab$ | async; as tab) {
     <p style="white-space: pre-line;">{{ tab.tabToString }}</p>
+    @if (midi$ | async; as midi){
+      @if(midi){
+        <a href="{{midi.url}}" target="_blank">Download your midi file</a>
+      }
+    }
 } @else {
   <p>Loading…</p>
 }
