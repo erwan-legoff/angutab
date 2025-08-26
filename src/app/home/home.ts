@@ -10,6 +10,7 @@ import * as Tone from 'tone';
 import { Midi } from '@tonejs/midi';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { GenerateMelodyDto } from './dto/generate-melody.dto';
 type PolySynth = Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>;
 @Component({
   selector: 'app-home',
@@ -21,51 +22,66 @@ type PolySynth = Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>;
 export class Home {
   private http = inject(HttpClient);
   private apiHost = 'http://localhost:3000';
-  melody$: Observable<MelodyDto> = this.http
-    .post<MelodyDto>(`${this.apiHost}/melodies/preview/generate`, {})
-    .pipe(shareReplay(1));
-
-  tab$: Observable<TabDto> = this.melody$.pipe(
-    map(
-      (melody): TabFromMelodyDto => ({
-        playedNotes: melody.playedNotes,
-        tabName: 'preview-tab',
-      })
-    ),
-    switchMap((dto) => this.http.post<TabDto>(`${this.apiHost}/tabs/preview/from-melody`, dto)),
-    shareReplay(1)
-  );
-
-  midi$: Observable<{ file: File; url: string }> = this.melody$.pipe(
-    map(
-      (melody): TrackFromMelodyDto => ({
-        playedNotes: melody.playedNotes,
-        beatPerMinute: melody.beatPerMinute,
-      })
-    ),
-    switchMap((dto) =>
-      this.http.post(`${this.apiHost}/tracks/preview/from-melody`, dto, {
-        responseType: 'blob',
-      })
-    ),
-    map((blob) => {
-      const file = new File([blob], 'midi.mid');
-      const url = URL.createObjectURL(file);
-
-      return { file, url };
-    }),
-    shareReplay(1)
-  );
-
-  midiTone$: Observable<Midi> = this.midi$.pipe(
-    switchMap(async (midi) => {
-      return Midi.fromUrl(midi.url);
-    }),
-    shareReplay(1)
-  );
+  melody$!: Observable<MelodyDto>;
+  tab$!: Observable<TabDto>;
+  midi$!: Observable<{ file: File; url: string }>;
+  midiTone$!: Observable<Midi>;
 
   synths: Array<PolySynth> = [];
   isPlaying = false;
+
+  ngOnInit(): void {
+
+    const defaultDto: GenerateMelodyDto = { notesCount: 50 };
+    this.generate(defaultDto);
+  }
+
+  generate(dto: GenerateMelodyDto): void {
+  
+    this.melody$ = this.http
+      .post<MelodyDto>(`${this.apiHost}/melodies/preview/generate`, dto)
+      .pipe(shareReplay(1));
+
+  
+    this.tab$ = this.melody$.pipe(
+      map(
+        (melody): TabFromMelodyDto => ({
+          playedNotes: melody.playedNotes,
+          tabName: 'preview-tab',
+        })
+      ),
+      switchMap((body) =>
+        this.http.post<TabDto>(`${this.apiHost}/tabs/preview/from-melody`, body)
+      ),
+      shareReplay(1)
+    );
+
+
+    this.midi$ = this.melody$.pipe(
+      map(
+        (melody): TrackFromMelodyDto => ({
+          playedNotes: melody.playedNotes,
+          beatPerMinute: melody.beatPerMinute,
+        })
+      ),
+      switchMap((body) =>
+        this.http.post(`${this.apiHost}/tracks/preview/from-melody`, body, {
+          responseType: 'blob',
+        })
+      ),
+      map((blob) => {
+        const file = new File([blob], 'midi.mid');
+        const url = URL.createObjectURL(file);
+        return { file, url };
+      }),
+      shareReplay(1)
+    );
+
+    this.midiTone$ = this.midi$.pipe(
+      switchMap(async (midi) => Midi.fromUrl(midi.url)),
+      shareReplay(1)
+    );
+  }
 
   /**
    * Will play any given midi thanks to tone.js
