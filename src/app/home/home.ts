@@ -6,9 +6,9 @@ import { MelodyDto } from './dto/melody.dto'; // ton type: { playedNotes; beatPe
 import { TabFromMelodyDto } from './dto/tab-from-melody.dto';
 import { TabDto } from './dto/tab.dto'; // la réponse de tab (selon ton contrat)
 import { TrackFromMelodyDto } from './dto/track-from-melody.dto';
-import * as Tone from "tone";
+import * as Tone from 'tone';
 import { Midi } from '@tonejs/midi';
-
+type PolySynth = Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>;
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -61,11 +61,46 @@ export class Home {
     }),
     shareReplay(1)
   );
-//https://stackoverflow.com/questions/75227704/how-can-i-use-tone-js-to-play-a-midi-file
-  // playMidi(){
 
-  //   const synth = new Tone.Synth().toDestination()
-    
-  //   synth.
-  // }
+  synths: Array<PolySynth> = [];
+  isPlaying = false;
+
+  /**
+   * Will play any given midi thanks to tone.js
+   * https://stackoverflow.com/questions/75227704/how-can-i-use-tone-js-to-play-a-midi-file
+   * @param midi A midi file
+   * @param param1 options for synth tone
+   */
+  async playMidi(midi: Midi, { attack = 0.002, decay = 0.1, sustain = 0.3, release = 1 } = {}) {
+    const now = Tone.now() + 0.5;
+    await Tone.start();
+    this.disposeSynths();
+    midi.tracks.forEach((track) => {
+      const synth = this.initSynth({ attack, decay, sustain, release });
+      this.synths.push(synth);
+      track.notes.forEach((note) => {
+        synth.triggerAttackRelease(note.name, note.duration, note.time + now, note.velocity);
+      });
+    });
+    this.isPlaying = true;
+  }
+  disposeSynths() {
+    this.synths.forEach((s) => s.dispose());
+  }
+
+  /**
+   * Will return a tone.js synth according to your parameters
+   * @param param0 options for the synth tone
+   * @returns
+   */
+  private initSynth({ attack = 0.002, decay = 0.1, sustain = 0.3, release = 1 } = {}): PolySynth {
+    return new Tone.PolySynth(Tone.Synth, {
+      envelope: {
+        attack,
+        decay,
+        sustain,
+        release,
+      },
+    }).toDestination();
+  }
 }
