@@ -9,6 +9,9 @@
   padding: .75rem;
   margin: 1rem 0;
 }
+.mat-mdc-icon-button {
+  padding: 0;
+}
 
 .player {
   display: flex;
@@ -17,6 +20,7 @@
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
