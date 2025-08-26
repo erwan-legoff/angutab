@@ -2,15 +2,7 @@
   @if (tab$ | async; as tab) {
     <mat-card-header>
       <mat-card-title>Prévisualisation</mat-card-title>
-      <mat-card-actions>
-        @if (midi$ | async; as midi) {
-          @if (midi) {
-            <a mat-stroked-button color="primary" [href]="midi.url" target="_blank" rel="noopener">
-              Télécharger le MIDI
-            </a>
-          }
-        }
-      </mat-card-actions>
+      
     </mat-card-header>
 
     <mat-card-content>
@@ -24,8 +16,18 @@
         <button mat-icon-button color="primary" (click)="disposeSynths()">
            <img src="assets/images/pause_button.svg" alt="Play" class="icon" />
         </button>
+        @if (midi$ | async; as midi) {
+          @if (midi) {
+            <a mat-stroked-button color="primary" [href]="midi.url" target="_blank" rel="noopener">
+              Télécharger le MIDI
+            </a>
+          }
+        }
         </div>
       }
+      
+        
+      
     </mat-card-content>
   } @else {
     <mat-card-content>
