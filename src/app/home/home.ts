@@ -8,11 +8,13 @@ import { TabDto } from './dto/tab.dto'; // la réponse de tab (selon ton contrat
 import { TrackFromMelodyDto } from './dto/track-from-melody.dto';
 import * as Tone from 'tone';
 import { Midi } from '@tonejs/midi';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 type PolySynth = Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>;
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, MatCardModule, MatButtonModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

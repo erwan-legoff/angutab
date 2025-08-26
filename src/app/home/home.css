@@ -1,0 +1,22 @@
+.tab {
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.4;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: .75rem;
+  margin: 1rem 0;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}

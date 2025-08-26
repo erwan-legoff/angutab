@@ -1,16 +1,35 @@
-@if (tab$ | async; as tab) {
-    <p style="white-space: pre-line;">{{ tab.tabToString }}</p>
-    
-    
-    @if (midi$ | async; as midi){
-      @if(midi){
-        <a href="{{midi.url}}" target="_blank">Download your midi file</a>
+<mat-card>
+  @if (tab$ | async; as tab) {
+    <mat-card-header>
+      <mat-card-title>Prévisualisation</mat-card-title>
+      <mat-card-actions>
+        @if (midi$ | async; as midi) {
+          @if (midi) {
+            <a mat-stroked-button color="primary" [href]="midi.url" target="_blank" rel="noopener">
+              Télécharger le MIDI
+            </a>
+          }
+        }
+      </mat-card-actions>
+    </mat-card-header>
+
+    <mat-card-content>
+      <pre class="tab">{{ tab.tabToString }}</pre>
+
+      @if (midiTone$ | async; as midiTone) {
+        <div class="player">
+          <button mat-icon-button color="primary" (click)="playMidi(midiTone)">
+           <img src="assets/images/play_button.svg" alt="Play" class="icon" />
+        </button>
+          <button mat-stroked-button color="warn" (click)="disposeSynths()">
+            Stop
+          </button>
+        </div>
       }
-    }
-    @if(midiTone$ | async; as midiTone){
-      <button (click)="playMidi(midiTone)">Play</button>
-      <button (click)="disposeSynths()" >Stop</button>
-    }
-} @else {
-  <p>Loading…</p>
-}
+    </mat-card-content>
+  } @else {
+    <mat-card-content>
+      <p>Chargement…</p>
+    </mat-card-content>
+  }
+</mat-card>
