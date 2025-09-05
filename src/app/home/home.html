@@ -16,13 +16,13 @@
         <button mat-icon-button color="primary" (click)="disposeSynths()">
            <img src="assets/images/pause_button.svg" alt="Play" class="icon" />
         </button>
-        <a mat-stroked-button color="primary" (click)="generate()">
+        <button mat-flat-button color="warn" (click)="generate()">
               Générer à nouveau
-            </a>
+        </button>
         
         @if (midi$ | async; as midi) {
           @if (midi) {
-            <a mat-stroked-button color="primary" [href]="midi.url" target="_blank" rel="noopener">
+            <a mat-button color="primary" [href]="midi.url" target="_blank" rel="noopener">
               Télécharger le MIDI
             </a>
           }
