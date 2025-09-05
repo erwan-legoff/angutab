@@ -16,6 +16,10 @@
         <button mat-icon-button color="primary" (click)="disposeSynths()">
            <img src="assets/images/pause_button.svg" alt="Play" class="icon" />
         </button>
+        <a mat-stroked-button color="primary" (click)="generate()">
+              Générer à nouveau
+            </a>
+        
         @if (midi$ | async; as midi) {
           @if (midi) {
             <a mat-stroked-button color="primary" [href]="midi.url" target="_blank" rel="noopener">
@@ -24,6 +28,7 @@
           }
         }
         </div>
+        
       }
       
         

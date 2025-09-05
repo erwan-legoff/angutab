@@ -29,14 +29,14 @@ export class Home {
 
   synths: Array<PolySynth> = [];
   isPlaying = false;
-
+  private defaultDto: GenerateMelodyDto = { notesCount: 50 };
   ngOnInit(): void {
 
-    const defaultDto: GenerateMelodyDto = { notesCount: 50 };
-    this.generate(defaultDto);
+    
+    this.generate(this.defaultDto);
   }
 
-  generate(dto: GenerateMelodyDto): void {
+  generate(dto: GenerateMelodyDto = this.defaultDto): void {
   
     this.melody$ = this.http
       .post<MelodyDto>(`${this.apiHost}/melodies/preview/generate`, dto)
