@@ -27,6 +27,21 @@
             </a>
           }
         }
+        @if (scales$ | async; as scales){
+          @if(scales){
+            <form>
+              <mat-form-field>
+                <mat-label>Scale</mat-label>
+                <mat-select [(ngModel)]="selectedScale" name="food">
+                  @for (scale of scales; track scale) {
+                    <mat-option [value]="scale.id">{{scale.label}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </form>
+
+          }
+        }
         </div>
         
       }

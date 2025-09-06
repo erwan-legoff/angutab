@@ -11,11 +11,26 @@ import { Midi } from '@tonejs/midi';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { GenerateMelodyDto } from './dto/generate-melody.dto';
+import { FindAllScalesDto } from './dto/find-all-scales.dto';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { signal, computed } from '@angular/core';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { FormsModule, NgSelectOption } from '@angular/forms';
 type PolySynth = Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>;
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [AsyncPipe, MatCardModule, MatButtonModule],
+  imports: [
+    AsyncPipe,
+    MatCardModule,
+    MatButtonModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    FormsModule,
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -26,23 +41,21 @@ export class Home {
   tab$!: Observable<TabDto>;
   midi$!: Observable<{ file: File; url: string }>;
   midiTone$!: Observable<Midi>;
-
+  selectedScale = signal<string>('');
   synths: Array<PolySynth> = [];
+  scales$!: Observable<FindAllScalesDto>;
   isPlaying = false;
   private defaultDto: GenerateMelodyDto = { notesCount: 50 };
   ngOnInit(): void {
-
-    
+    this.initFilters();
     this.generate(this.defaultDto);
   }
 
   generate(dto: GenerateMelodyDto = this.defaultDto): void {
-  
     this.melody$ = this.http
       .post<MelodyDto>(`${this.apiHost}/melodies/preview/generate`, dto)
       .pipe(shareReplay(1));
 
-  
     this.tab$ = this.melody$.pipe(
       map(
         (melody): TabFromMelodyDto => ({
@@ -50,12 +63,9 @@ export class Home {
           tabName: 'preview-tab',
         })
       ),
-      switchMap((body) =>
-        this.http.post<TabDto>(`${this.apiHost}/tabs/preview/from-melody`, body)
-      ),
+      switchMap((body) => this.http.post<TabDto>(`${this.apiHost}/tabs/preview/from-melody`, body)),
       shareReplay(1)
     );
-
 
     this.midi$ = this.melody$.pipe(
       map(
@@ -81,6 +91,10 @@ export class Home {
       switchMap(async (midi) => Midi.fromUrl(midi.url)),
       shareReplay(1)
     );
+  }
+
+  initFilters(): void {
+    this.scales$ = this.http.get<FindAllScalesDto>(`${this.apiHost}/scales`).pipe(shareReplay(1));
   }
 
   /**
