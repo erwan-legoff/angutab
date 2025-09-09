@@ -2,38 +2,47 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { Observable, map, switchMap, shareReplay } from 'rxjs';
-import { MelodyDto } from './dto/melody.dto'; // ton type: { playedNotes; beatPerMinute }
+
+import { MelodyDto } from './dto/melody.dto'; // { playedNotes; beatPerMinute }
 import { TabFromMelodyDto } from './dto/tab-from-melody.dto';
-import { TabDto } from './dto/tab.dto'; // la réponse de tab (selon ton contrat)
+import { TabDto } from './dto/tab.dto';
 import { TrackFromMelodyDto } from './dto/track-from-melody.dto';
+import { GenerateMelodyDto } from './dto/generate-melody.dto';
+import { FindAllScalesDto } from './dto/find-all-scales.dto';
+
 import * as Tone from 'tone';
 import { Midi } from '@tonejs/midi';
+
+import { signal, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+
+// ✅ Angular Material modules (standalone-ready)
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { GenerateMelodyDto } from './dto/generate-melody.dto';
-import { FindAllScalesDto } from './dto/find-all-scales.dto';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { signal, computed } from '@angular/core';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatOption, MatSelect } from '@angular/material/select';
-import { FormsModule, NgSelectOption } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+
+// ✅ Angular forms
+import { FormsModule } from '@angular/forms';
 type PolySynth = Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>;
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     AsyncPipe,
+    FormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',
@@ -46,11 +55,12 @@ export class Home {
   midi$!: Observable<{ file: File; url: string }>;
   midiTone$!: Observable<Midi>;
   selectedScale = signal<string | undefined>(undefined);
+  selectedNotesCount = signal<number>(50);
   synths: Array<PolySynth> = [];
   scales$!: Observable<FindAllScalesDto>;
   isPlaying = false;
   private readonly dto = computed<GenerateMelodyDto>(() => ({
-    notesCount: 50,
+    notesCount: this.selectedNotesCount(),
     scale: this.selectedScale(),
   }));
   ngOnInit(): void {

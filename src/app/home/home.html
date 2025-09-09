@@ -40,7 +40,20 @@
                   }
                 </mat-select>
               </mat-form-field>
+              <mat-form-field appearance="fill">
+              <mat-label>Nombre de notes</mat-label>
+              <input
+                matInput
+                type="number"
+                [(ngModel)]="selectedNotesCount"
+                name="notesCount"
+                min="1"
+                max="200"
+                step="1"
+              />
+            </mat-form-field>
             </form>
+            
 
           }
         }
