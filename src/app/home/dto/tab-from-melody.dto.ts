@@ -1,6 +1,7 @@
-import { PlayedNoteDto } from "./tab.dto";
+import { PlayedNoteDto } from './tab.dto';
 
 export interface TabFromMelodyDto {
-  playedNotes: PlayedNoteDto[]
+  playedNotes: PlayedNoteDto[];
+  beatPerMinute: number;
   tabName: string;
 }

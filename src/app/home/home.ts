@@ -56,12 +56,14 @@ export class Home {
   midiTone$!: Observable<Midi>;
   selectedScale = signal<string | undefined>(undefined);
   selectedNotesCount = signal<number>(50);
+  selectedTempo = signal<number>(120);
   synths: Array<PolySynth> = [];
   scales$!: Observable<FindAllScalesDto>;
   isPlaying = false;
   private readonly dto = computed<GenerateMelodyDto>(() => ({
     notesCount: this.selectedNotesCount(),
     scale: this.selectedScale(),
+    tempo: this.selectedTempo(),
   }));
   ngOnInit(): void {
     this.initFilters();
@@ -77,6 +79,8 @@ export class Home {
       map(
         (melody): TabFromMelodyDto => ({
           playedNotes: melody.playedNotes,
+          beatPerMinute: melody.beatPerMinute,
+          
           tabName: 'preview-tab',
         })
       ),

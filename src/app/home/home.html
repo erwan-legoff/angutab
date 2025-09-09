@@ -52,6 +52,18 @@
                 step="1"
               />
             </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Tempo</mat-label>
+              <input
+                matInput
+                type="number"
+                [(ngModel)]="selectedTempo"
+                name="tempo"
+                min="1"
+                max="200"
+                step="1"
+              />
+            </mat-form-field>
             </form>
             
 
