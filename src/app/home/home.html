@@ -16,9 +16,11 @@
         <button mat-icon-button color="primary" (click)="disposeSynths()">
            <img src="assets/images/pause_button.svg" alt="Play" class="icon" />
         </button>
-        <button mat-flat-button color="warn" (click)="generate()">
-              Générer à nouveau
-        </button>
+       <button mat-flat-button color="accent" (click)="generate()" aria-label="Générer à nouveau">
+            <mat-icon>autorenew</mat-icon>
+            <span>Générer</span>
+          </button>
+
         
         @if (midi$ | async; as midi) {
           @if (midi) {

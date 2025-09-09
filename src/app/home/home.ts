@@ -10,6 +10,8 @@ import * as Tone from 'tone';
 import { Midi } from '@tonejs/midi';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { GenerateMelodyDto } from './dto/generate-melody.dto';
 import { FindAllScalesDto } from './dto/find-all-scales.dto';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -25,6 +27,8 @@ type PolySynth = Tone.PolySynth<Tone.Synth<Tone.SynthOptions>>;
     AsyncPipe,
     MatCardModule,
     MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
     MatFormField,
     MatLabel,
     MatSelect,
@@ -41,19 +45,22 @@ export class Home {
   tab$!: Observable<TabDto>;
   midi$!: Observable<{ file: File; url: string }>;
   midiTone$!: Observable<Midi>;
-  selectedScale = signal<string>('');
+  selectedScale = signal<string | undefined>(undefined);
   synths: Array<PolySynth> = [];
   scales$!: Observable<FindAllScalesDto>;
   isPlaying = false;
-  private defaultDto: GenerateMelodyDto = { notesCount: 50 };
+  private readonly dto = computed<GenerateMelodyDto>(() => ({
+    notesCount: 50,
+    scale: this.selectedScale(),
+  }));
   ngOnInit(): void {
     this.initFilters();
-    this.generate(this.defaultDto);
+    this.generate();
   }
 
-  generate(dto: GenerateMelodyDto = this.defaultDto): void {
+  generate(): void {
     this.melody$ = this.http
-      .post<MelodyDto>(`${this.apiHost}/melodies/preview/generate`, dto)
+      .post<MelodyDto>(`${this.apiHost}/melodies/preview/generate`, this.dto())
       .pipe(shareReplay(1));
 
     this.tab$ = this.melody$.pipe(
